@@ -1,0 +1,348 @@
+{
+	"info": {
+		"_postman_id": "79e35fca-d334-4935-8ce0-3c23996a2024",
+		"name": "Practice Project",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create a new record",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "1c9add16-cbbc-41f8-b238-04dc95fa99ef",
+						"type": "text/javascript",
+						"exec": [
+							"// Generate a random id between 1 and 1000",
+							"var id = Math.floor((Math.random() * 1000) + 1); ",
+							"pm.environment.set(\"post_id\", id);",
+							"",
+							"// Generate a random name for the post title",
+							"var title = \"\";",
+							"var possible = \"abcdefghijklmnopqrstuvwxyz\";",
+							"for (var i = 0; i < 5; i++)",
+							"    title += possible.charAt(Math.floor(Math.random() * possible.length));",
+							"pm.environment.set(\"post_title\", title);",
+							"",
+							"// Generate a random name for the post author",
+							"var author = \"\";",
+							"for (var i = 0; i < 5; i++)",
+							"    author += possible.charAt(Math.floor(Math.random() * possible.length));",
+							"pm.environment.set(\"post_author\", author);",
+							"",
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "cf16773b-c9c6-42e7-bfe4-545f3c45dba1",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([201,202]);",
+							"});",
+							"",
+							"pm.test(\"Check post_id value\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.id).to.eql(pm.environment.get(\"post_id\").toString());",
+							"});",
+							"",
+							"pm.test(\"Check post_title value\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.title).to.eql(pm.environment.get(\"post_title\"));",
+							"});",
+							"",
+							"pm.test(\"Check post_author value\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.author).to.eql(pm.environment.get(\"post_author\"));",
+							"});",
+							"",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n \"id\": \"{{post_id}}\",\r\n \"title\": \"{{post_title}}\",\r\n \"author\": \"{{post_author}}\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/posts",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"posts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Verify record data",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "33d9edf5-0b14-422f-96f7-579bcd0f94ba",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Check post_id value\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.id).to.eql(pm.environment.get(\"post_id\").toString());",
+							"});",
+							"",
+							"pm.test(\"Check post_title value\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.title).to.eql(pm.environment.get(\"post_title\"));",
+							"});",
+							"",
+							"pm.test(\"Check post_author value\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.author).to.eql(pm.environment.get(\"post_author\"));",
+							"});",
+							"",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{baseUrl}}/posts/{{post_id}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"posts",
+						"{{post_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update record",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "a30fd253-3f55-44c1-9f2a-971889d84bdc",
+						"type": "text/javascript",
+						"exec": [
+							"// Generate a new random name for the post title",
+							"var title = \"\";",
+							"var possible = \"abcdefghijklmnopqrstuvwxyz\";",
+							"for (var i = 0; i < 5; i++)",
+							"    title += possible.charAt(Math.floor(Math.random() * possible.length));",
+							"",
+							"pm.environment.unset(\"post_title\");",
+							"pm.environment.set(\"post_title\", title);",
+							"",
+							"",
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "7397e17f-5a73-4834-9205-ec53f4fd3269",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"console.log(pm.response.json());",
+							"pm.test(\"Check post_id value\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.id).to.eql(pm.environment.get(\"post_id\").toString());",
+							"});",
+							"",
+							"pm.test(\"Check post_title value was updated\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.title).to.eql(pm.environment.get(\"post_title\"));",
+							"});",
+							"",
+							"pm.test(\"Check post_author value\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.author).to.eql(pm.environment.get(\"post_author\"));",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n \"id\": \"{{post_id}}\",\r\n \"title\": \"{{post_title}}\",\r\n \"author\": \"{{post_author}}\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/posts/{{post_id}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"posts",
+						"{{post_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Verify updated data",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "33d9edf5-0b14-422f-96f7-579bcd0f94ba",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Check post_id value\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.id).to.eql(pm.environment.get(\"post_id\").toString());",
+							"});",
+							"",
+							"pm.test(\"Check post_title value\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.title).to.eql(pm.environment.get(\"post_title\"));",
+							"});",
+							"",
+							"pm.test(\"Check post_author value\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.author).to.eql(pm.environment.get(\"post_author\"));",
+							"});",
+							"",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{baseUrl}}/posts/{{post_id}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"posts",
+						"{{post_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete record",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b67353f9-3b6b-455d-8565-b6220546acb4",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Check response body is empty\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.eql({});",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{baseUrl}}/posts/{{post_id}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"posts",
+						"{{post_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Verify data is deleted successfully",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "fbe83174-f003-4ea6-abac-c164f895db21",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 404\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Check response body is empty\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.eql({});",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{baseUrl}}/posts/{{post_id}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"posts",
+						"{{post_id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
